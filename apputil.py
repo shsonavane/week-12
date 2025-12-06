@@ -8,17 +8,14 @@ import matplotlib.pyplot as plt
 def update_board(current_board):
     """
     Execute one step of Conway's Game of Life.
-    
     Rules:
     - Any live cell with 2-3 live neighbors survives
     - Any dead cell with exactly 3 live neighbors becomes alive
     - All other cells die or stay dead
-    
     Parameters
     ----------
     current_board : numpy.ndarray
         A binary array where 1 represents a living cell and 0 represents a dead cell.
-    
     Returns
     -------
     updated_board : numpy.ndarray
@@ -26,26 +23,24 @@ def update_board(current_board):
     """
     # Get dimensions of the board
     rows, cols = current_board.shape
-    
     # Create a new board for the next generation
     updated_board = np.zeros_like(current_board)
-    
     # Iterate through each cell
     for i in range(rows):
         for j in range(cols):
             # Count live neighbors (8 surrounding cells)
-            # We use modulo (%) to wrap around edges (toroidal topology)
             neighbors = 0
             for di in [-1, 0, 1]:
                 for dj in [-1, 0, 1]:
                     # Skip the cell itself
                     if di == 0 and dj == 0:
                         continue
-                    # Count neighbor with wrapping
-                    ni = (i + di) % rows
-                    nj = (j + dj) % cols
-                    neighbors += current_board[ni, nj]
-            
+                    # Calculate neighbor position
+                    ni = i + di
+                    nj = j + dj
+                    # Check if neighbor is within bounds (no wrapping)
+                    if 0 <= ni < rows and 0 <= nj < cols:
+                        neighbors += current_board[ni, nj]
             # Apply Conway's Game of Life rules
             if current_board[i, j] == 1:  # Cell is currently alive
                 if neighbors == 2 or neighbors == 3:
@@ -57,7 +52,6 @@ def update_board(current_board):
                     updated_board[i, j] = 1  # Cell becomes alive (reproduction)
                 else:
                     updated_board[i, j] = 0  # Cell stays dead
-
     return updated_board
 
 
